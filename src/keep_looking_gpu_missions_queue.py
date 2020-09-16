@@ -9,14 +9,21 @@
 这个代码能做到多进程并行
 '''
 
+import sys
 import time
 import subprocess
 import numpy as np
 import tensorflow as tf
 from manager import GPUManager
 import random
+from optparse import OptionParser
 # from keras.layers import LSTM
 gm=GPUManager()
+
+parser = OptionParser()
+parser.add_option('-i', dest='cmd_file', default=None)
+parser.add_option('-t', dest='waiting_seconds', default=None)
+(options, args) = parser.parse_args()
 
 '''
 cmd_1 = 'CUDA_VISIBLE_DEVICES=' + str(gpu_index) + ' ' + 'python /public/home/ztu/projects/basenji-old/bin/basenji_sat_bed2.py -f /public/home/WBXie/tuzhuo/tzhuo/genome/NIPP.fasta -l 400 --rc -t /public/home/ztu/projects/nxiepo/2/yuanjian/bw54-list.txt -o /public/home/ztu/projects/nxiepo/lwh_predict/lbd/h5_result -n lbd /public/home/ztu/projects/nxiepo/2/training/ZS97_params.txt /public/home/ztu/projects/nxiepo/2/training/r-zs-54/model_best.tf /public/home/ztu/projects/nxiepo/lwh_predict/lbd/lbd.bed'
@@ -24,6 +31,7 @@ cmd_1 = 'CUDA_VISIBLE_DEVICES=' + str(gpu_index) + ' ' + 'python /public/home/zt
 
 mission_queue = []
 #for i in range(3):
+'''
 if(1):
     #以下的cmd_用于测试目的，真正使用的时候将字符串cmd_的内容换成自己需要执行的GPU任务命令即可
     cmd_ = 'python ./fizzbuzz.py > fizzbuzz_1'
@@ -36,6 +44,20 @@ if(1):
     mission_queue.append(cmd_)
     cmd_ = 'python ./fizzbuzz.py > fizzbuzz_5'
     mission_queue.append(cmd_)
+'''
+
+if (options.cmd_file != None):
+    cmds =  open(options.cmd_file)
+    line = cmds.readline()
+    while(line):
+        line = line.strip()
+        if ('python' in line):#仅支持python语言的GPU计算任务
+            mission_queue.append(line)
+        line = cmds.readline()
+    cmds.close()
+
+if (len(mission_queue) <= 0):
+    sys.exit(0)
 
 p = []
 total = len(mission_queue)
@@ -57,7 +79,7 @@ while(finished + running < total):
         # subprocess.call(cmd_, shell=True)
         p.append(subprocess.Popen(cmd_, shell=True))
         running += 1
-        time.sleep(10)#等待NVIDIA CUDA代码库初始化并启动
+        time.sleep(int(options.waiting_seconds))#等待NVIDIA CUDA代码库初始化并启动
 
     else:#如果服务器上所有GPU都已经满载则不提交GPU计算任务
         print('Keep Looking @ %s'%(localtime), end = '\r')
