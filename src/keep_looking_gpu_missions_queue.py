@@ -25,7 +25,7 @@ cmd_1 = 'CUDA_VISIBLE_DEVICES=' + str(gpu_index) + ' ' + 'python /public/home/zt
 mission_queue = []
 #for i in range(3):
 if(1):
-    #以下的cmd_用于测试目的，真正使用的时候将cmd换成自己需要执行的GPU任务命令即可
+    #以下的cmd_用于测试目的，真正使用的时候将字符串cmd_的内容换成自己需要执行的GPU任务命令即可
     cmd_ = 'python ./fizzbuzz.py > fizzbuzz_1'
     mission_queue.append(cmd_)
     cmd_ = 'python fizzbuzz.py > fizzbuzz_2'
