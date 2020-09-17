@@ -59,10 +59,12 @@ if (options.cmd_file != None):
 if (len(mission_queue) <= 0):
     sys.exit(0)
 
+print('Got %d Missions\n'%(len(mission_queue)))
 p = []
 total = len(mission_queue)
 finished = 0
 running = 0
+count = 0
 
 while(finished + running < total):
     '''
@@ -75,7 +77,8 @@ while(finished + running < total):
     if len(gpu_av) > 0 :
         gpu_index = random.sample(gpu_av, 1)[0]#为了保证服务器上所有GPU负载均衡，从所有空闲GPU当中随机选择一个执行本轮次的计算任务
         cmd_ = 'CUDA_VISIBLE_DEVICES=' + str(gpu_index) + ' ' + mission_queue.pop(0)#mission_queue当中的任务采用先进先出优先级策略
-        print('Mission : %s\nRUN ON GPU : %d\nStarted @ %s\n'%(cmd_, gpu_index, localtime))
+        print('Mission %d : %s\nRUN ON GPU : %d\nStarted @ %s\n'%(count, cmd_, gpu_index, localtime))
+        count += 1
         # subprocess.call(cmd_, shell=True)
         p.append(subprocess.Popen(cmd_, shell=True))
         running += 1
