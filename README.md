@@ -15,7 +15,7 @@ example:
 bash ./keep_looking_gpu.sh
 ```
 
-### 2. You have some GPU task to run parallelly on a multi-GPU server.
+### 2. You have some GPU tasks to run parallelly on a multi-GPU server.
 
 same as Usage.1
 
