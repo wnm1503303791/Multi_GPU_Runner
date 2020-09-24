@@ -99,8 +99,9 @@ while(finished + running < total):
         time.sleep(1)
     p = new_p
 
+print('All jobs submited ! Waiting %d jobs finished ! '%(len(p)))
 for i in range(len(p)):#mission_queue队列当中的所有GPU计算任务均已提交，等待GPU计算完毕结束主进程
     p[i].wait()
 
-print('Mission Complete ! Checking GPU Process Over ! ')
+print('%d Mission Complete ! Checking GPU Process Over ! '%(finished+len(p)) )
 
